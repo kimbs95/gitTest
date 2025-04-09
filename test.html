@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GOJS Genogram 신랑-신부 수평 배치</title>
+  <script src="https://unpkg.com/gojs/release/go.js"></script>
+  <script src="https://gojs.net/latest/extensions/GenogramLayout.js"></script>
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; }
+    #myDiagramDiv { width: 100%; height: 100%; background-color: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <div id="myDiagramDiv"></div>
+
+  <script>
+    function init() {
+      const $ = go.GraphObject.make;
+
+      const myDiagram =
+        $(go.Diagram, "myDiagramDiv",
+          {
+            initialAutoScale: go.Diagram.Uniform,
+            layout: $(GenogramLayout, {
+              direction: 90,  // 위→아래 방향 (수평 부부 배치)
+              layerSpacing: 30
+            }),
+            "undoManager.isEnabled": true
+          });
+
+      // 남성 노드 템플릿
+      myDiagram.nodeTemplateMap.add("M",
+        $(go.Node, "Auto",
+          $(go.Shape, "Rectangle",
+            { fill: "#90CAF9", stroke: "black", width: 80, height: 40 }),
+          $(go.TextBlock,
+            { margin: 5, font: "bold 12px sans-serif", wrap: go.TextBlock.WrapFit, width: 80 },
+            new go.Binding("text", "n"))
+        )
+      );
+
+      // 여성 노드 템플릿
+      myDiagram.nodeTemplateMap.add("F",
+        $(go.Node, "Auto",
+          $(go.Shape, "Ellipse",
+            { fill: "#F48FB1", stroke: "black", width: 80, height: 40 }),
+          $(go.TextBlock,
+            { margin: 5, font: "bold 12px sans-serif", wrap: go.TextBlock.WrapFit, width: 80 },
+            new go.Binding("text", "n"))
+        )
+      );
+
+      // 링크 템플릿
+      myDiagram.linkTemplate =
+        $(go.Link,
+          { routing: go.Link.AvoidsNodes, curve: go.Link.JumpOver },
+          $(go.Shape),
+          $(go.Shape, { toArrow: "Standard" })
+        );
+
+      // 노드 데이터
+      const nodeDataArray = [
+        // 신랑 부모
+        { key: 1, n: "신랑 아버지", s: "M" },
+        { key: 2, n: "신랑 어머니", s: "F" },
+
+        // 신부 부모
+        { key: 3, n: "신부 아버지", s: "M" },
+        { key: 4, n: "신부 어머니", s: "F" },
+
+        // 신랑과 신부
+        { key: 5, n: "신랑", s: "M", f: 1, m: 2 },
+        { key: 6, n: "신부", s: "F", f: 3, m: 4 },
+
+        // 자녀
+        { key: 7, n: "아들", s: "M", f: 5, m: 6 },
+        { key: 8, n: "딸", s: "F", f: 5, m: 6 }
+      ];
+
+      // 결혼 관계만 linkDataArray에 넣음
+      const linkDataArray = [
+        { from: 1, to: 2, category: "Marriage" },
+        { from: 3, to: 4, category: "Marriage" },
+        { from: 5, to: 6, category: "Marriage" }
+      ];
+
+      const model = new go.GraphLinksModel();
+      model.nodeDataArray = nodeDataArray;
+      model.linkDataArray = linkDataArray;
+      model.linkCategoryProperty = "category";  // 링크 타입 지정
+
+      myDiagram.model = model;
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

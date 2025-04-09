@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table id="myTable" border="1">
+        <thead>
+          <tr>
+            <th>순번</th>
+            <th>이름</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td>1</td><td>홍길동</td></tr>
+          <tr><td>2</td><td>김철수</td></tr>
+          <tr><td>3</td><td>이영희</td></tr>
+        </tbody>
+      </table>
+      
+      <div style="margin-top: 10px;">
+        <button onclick="moveSelectedRow('up')">▲ 위로</button>
+        <button onclick="moveSelectedRow('down')">▼ 아래로</button>
+      </div>
+      <script>
+        let selectedRowIndex = null;
+
+document.querySelectorAll("#tableBody tr").forEach((row, index) => {
+  row.addEventListener("click", () => {
+    // 선택 행 표시
+    document.querySelectorAll("#tableBody tr").forEach(r => r.style.backgroundColor = "");
+    row.style.backgroundColor = "#f0f0f0";
+    selectedRowIndex = index;
+  });
+});
+
+function moveSelectedRow(direction) {
+  const tbody = document.getElementById("tableBody");
+  const rows = tbody.querySelectorAll("tr");
+
+  if (selectedRowIndex === null) return;
+
+  let newIndex = direction === "up" ? selectedRowIndex - 1 : selectedRowIndex + 1;
+
+  if (newIndex < 0 || newIndex >= rows.length) return;
+
+  const rowToMove = rows[selectedRowIndex];
+  const referenceRow = rows[newIndex];
+
+  if (direction === "up") {
+    tbody.insertBefore(rowToMove, referenceRow);
+  } else {
+    tbody.insertBefore(referenceRow, rowToMove);
+  }
+
+  // 순번 재계산
+  updateRowNumbers();
+
+  // 선택된 인덱스 업데이트
+  selectedRowIndex = newIndex;
+
+  // 다시 강조
+  document.querySelectorAll("#tableBody tr").forEach(r => r.style.backgroundColor = "");
+  tbody.querySelectorAll("tr")[selectedRowIndex].style.backgroundColor = "#f0f0f0";
+}
+
+function updateRowNumbers() {
+  const rows = document.querySelectorAll("#tableBody tr");
+  rows.forEach((row, index) => {
+    row.cells[0].innerText = index + 1;
+  });
+}
+
+      </script>
+</body>
+</html>
