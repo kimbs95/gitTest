@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="text" id="game">
+
+
+    <script>
+        let game = document.querySelector("#game");
+        let math = Math.floor(Math.random() * 100) + 1;
+        game.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+            console.log("math: "+ math);        
+            console.log("math: "+ typeof(math));        
+            console.log("game: "+typeof(+game.value));        
+
+            if(+game.value === math){
+                alert("정답입니다. ");
+            }else{
+                alert("다시 도전하세요");
+                if( +game.value > 100){
+                    alert("그리고 100 이하라고 말했습니다.")
+                }else if(+game.value > math ){
+                    alert(`${game.value}보다 낮습니다`);
+                }else if(+game.value < math ){
+                    alert(`${game.value}보다 높습니다`);
+                }
+                game.value='';
+            }
+                
+            }
+        })
+    </script>
+</body>
+
+</html>

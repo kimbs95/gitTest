@@ -1,0 +1,144 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page session="false" contentType="text/html; charset=utf-8" %>
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Home</title>
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+   <script type="text/javascript">
+   
+      function fileRead(fileTagElement) {
+         return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+                reader.onloadend = function(finished){
+                  resolve('<img src="'+finished.target.result+'" style="height: 100%;" />')
+                }
+                reader.readAsDataURL(fileTagElement.files.item(0));
+         });
+      }
+   
+   
+      document.addEventListener('DOMContentLoaded', () => {
+         document.getElementById('addGoodsPicture').addEventListener('change', async e => {
+               let thumb = await fileRead(document.getElementById('addGoodsPicture'));
+               document.getElementById('goodsThumbnail').innerHTML = thumb;
+         });
+         
+         document.getElementById('submit').addEventListener('click', async () => {
+            let file = document.getElementById('addGoodsPicture').files.item(0);
+            
+            if(file === null) {
+               alert('파일을 선택해 주세요.');
+               return;
+            }
+            
+            let fd = new FormData();
+            fd.append("file", file);
+            
+            let response = await fetch('/fileMultiUpload', {
+               method: 'POST',
+               body: fd
+            });
+            
+            if(response.status !== 200) {
+               alert('파일 업로드에 문제가 발생했습니다.');
+               return;
+            }
+            let serverFilename = response.headers.get('serverFilename');
+            let clientFilename = file.name;
+            console.log(clientFilename);
+            let sendInsertData = {
+               title: document.getElementById('goodsTitle').value.trim(),
+               example: document.getElementById('goodsExample').value.trim(),
+               price: +document.getElementById('goodsPrice').value.trim(),
+               count: +document.getElementById('goodsCount').value.trim(),
+               img_name: serverFilename,
+               img_filename: clientFilename
+            };
+            
+            let realResponse = await fetch('/insertGoods', {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json'
+               },
+               body: JSON.stringify(sendInsertData)
+            });
+            
+            let resultData = await realResponse.json();
+            
+            if(resultData.status !== 0) {
+               alert('빈 값이 있습니다. 확인해 주신 후 등록해 주세요');
+               return;
+            }
+            
+            alert('정상적으로 등록 되었습니다.');
+            location.reload();
+         });
+      });
+   </script>
+</head>
+<body>
+<div class="container pt-5">
+   <h4>상품 등록</h4>
+   <hr />
+   <div class="row">
+      <div class="col-6">
+         <div>
+            <div class="mb-3">
+              <label for="addGoodsPicture" class="form-label">이미지를 골라 주세요</label>
+              <input class="form-control" type="file" id="addGoodsPicture">
+            </div>
+            <div class="mb-3">
+               <h5>사진 미리보기</h5>
+               <div class="w-100" style="height: 300px; border: 1px solid black;" id="goodsThumbnail">
+               
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="col-6">
+         <div class="mb-3">
+           <label for="goodsTitle" class="form-label">상품 제목</label>
+           <input type="text" class="form-control" id="goodsTitle" placeholder="뜨거운 침대">
+         </div>
+         <div class="mb-3">
+           <label for="goodsExample" class="form-label">상품 설명</label>
+           <textarea class="form-control" id="goodsExample" rows="5"></textarea>
+         </div>
+         <div class="mb-3 row">
+            <div class="col-6">
+               <div class="mb-3">
+                 <label for="goodsPrice" class="form-label">상품 가격</label>
+                 <input type="text" class="form-control" id="goodsPrice" placeholder="가격 입력">
+               </div>
+            </div>
+            <div class="col-6">
+               <div class="mb-3">
+                 <label for="goodsCount" class="form-label">상품 수량</label>
+                 <input type="text" class="form-control" id="goodsCount" placeholder="수량 입력">
+               </div>
+            </div>
+            <div class="col-12">
+               <div class="row">
+                  <div class="col-auto">
+                   <label for="goodsOption">옵션</label>
+                   <input type="button" class="btn btn-primary" id="goodsOption" value="추가" />
+                 </div>
+                 <div class="col-auto">
+                   <label for="goodsAddOption">추가옵션</label>
+                   <input type="button" class="btn btn-primary" id="goodsAddOption" value="추가" />
+                 </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="col-12">
+         <div>
+            <input type="button" class="btn btn-primary" value="상품 등록" id="submit" />
+         </div>
+      </div>
+   </div>
+</div>
+</body>
+</html>
