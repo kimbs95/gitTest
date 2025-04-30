@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <table id="selectTable">
+        <tr>
+          <td>
+            <select class="uniqueSelect">
+              <option value="">--선택--</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+            <td>
+              <select class="uniqueSelect">
+                <option value="">--선택--</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select class="uniqueSelect">
+                <option value="">--선택--</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select class="uniqueSelect">
+                <option value="">--선택--</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select class="uniqueSelect">
+                <option value="">--선택--</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </td>
+          </tr>
+        <!-- 위와 같은 <tr>이 여러 개 있음 -->
+      </table>
+      
+      <script>
+        function updateSelectOptions() {
+          const selects = document.querySelectorAll('.uniqueSelect');
+          const selectedValues = {};
+      
+          // 각 select에서 선택된 값을 마지막 선택된 순서 기준으로 저장
+          selects.forEach((sel, idx) => {
+            const val = sel.value;
+            if (val) {
+              if (!selectedValues[val]) {
+                selectedValues[val] = idx;
+              } else {
+                // 이미 존재할 경우, 현재 선택값을 우선순위로 설정
+                selectedValues[val] = Math.max(selectedValues[val], idx);
+              }
+            }
+          });
+      
+          // 중복 제거 로직
+          selects.forEach((sel, idx) => {
+            const selectedVal = sel.value;
+            const options = sel.querySelectorAll('option');
+      
+            options.forEach(opt => {
+              if (opt.value === "") return;
+      
+              const isSelectedElsewhere = selectedValues[opt.value] !== undefined && selectedValues[opt.value] !== idx;
+      
+              // 마지막 선택된 tr의 select만 유지하고 나머지는 해당 값을 비활성화
+              if (isSelectedElsewhere) {
+                opt.disabled = true;
+              } else {
+                opt.disabled = false;
+              }
+            });
+          });
+        }
+      
+        document.querySelectorAll('.uniqueSelect').forEach(select => {
+          select.addEventListener('change', updateSelectOptions);
+        });
+      
+        // 초기 호출
+        updateSelectOptions();
+
+
+
+
+
+
+//         const selects = document.querySelectorAll('.uniqueSelect');
+
+// selects.forEach(select => {
+//   select.addEventListener('change', e => {
+//     const selectedValue = e.target.value;
+
+//     if (!selectedValue) return;
+
+//     selects.forEach(sel => {
+//       // 같은 select는 스킵
+//       if (sel === e.target) return;
+
+//       // 만약 다른 select가 같은 값을 가지고 있다면 초기화
+//       if (sel.value === selectedValue) {
+//         sel.value = ""; // 초기화
+//       }
+//     });
+//   });
+// });
+      </script>
+</body>
+</html>
