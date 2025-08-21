@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="myForm">
+        <input type="checkbox" name="items" value="apple"> 사과<br>
+        <input type="checkbox" name="items" value="banana"> 바나나<br>
+        <input type="checkbox" name="items" value="cherry"> 체리<br>
+        <button type="button" id="submitBtn">전송</button>
+      </form>
+      
+      <script>
+        document.getElementById('submitBtn').addEventListener('click', function () {
+          const checkedValues = Array.from(document.querySelectorAll('input[name="items"]:checked'))
+        .map(cb => cb.value);
+
+        console.log(`checkedValues ===> ${checkedValues}`);
+        console.log(`json checkedValues===> ${JSON.stringify(checkedValues)}`);
+        const checkedValues1 = Array.from(document.querySelectorAll('input[name="items"]:checked'));
+        console.log(`checkedValues1 ===> ${checkedValues1}`);
+        console.log(`json checkedValues1===> ${JSON.stringify(checkedValues1)}`);
+        
+
+        // 서버로 보내기 (예: fetch로 POST 요청)
+        
+        });
+
+
+        /*
+          화이팅이다.
+          힘내자.
+          git stash test
+          테스트중
+        */
+      </script>
+</body>
+</html>
