@@ -1,1 +1,3 @@
 Mega Coffee
+
+나는 지금 새폴더/gitTest 야
